@@ -1,0 +1,77 @@
+<head>
+  <title>Roadli</title>
+  <script type='text/javascript' src='assets/vendor/prefixfree.min.js'></script>
+</head>
+
+<body>
+  {{> main}}
+</body>
+
+<template name="main">
+  <div class='wrapper'>
+    <div class="form">
+      <div class='header' style="margin-bottom:5px">
+        <img src="logo.png" style="width:34%;margin-top:15px" alt="Roadli">
+        <!-- <h1>Roadli</h1> -->
+        <div class="instruct" style="margin-bottom:2%">Get the fastest route via a location.</div>
+      </div>
+      <div class='instruct'>Go from</div>
+      <input type="text" id="from-place"></input><br>
+      <div class='instruct'>to</div>
+      <input type="text" id="to-place"></input>
+      <div class='instruct' id="via-a">via a</div>
+      <input type="text" id="via-place" onkeyup="if (['a','e','i','o','u'].indexOf(this.value[0])>-1) {$('#via-a').text('via an')} else if ($('#via-a').text() == 'via an') {$('#via-a').text('via a')}"></input>
+      {{#isolate}}
+      {{#if link}}
+      <br><a style="font-size:18px" href="{{link}}" target="_blank">Open this route in Google Maps</a>
+      {{/if}}
+      {{/isolate}}
+    </div>
+    {{#constant}}
+    <div id="map-canvas" style="float:right;width:50%;height:100%"></div>
+    {{/constant}}
+  </div>
+  {{> route_table}}
+</div>
+
+
+<!--
+  <div id="control_panel" style="float:right;width:30%;text-align:left;padding-top:20px">
+   <div style="margin:20px;border-width:2px;">
+   <div id="directions_panel" style="margin:20px;background-color:#FFEE77;"></div>
+  </div>
+ -->
+</template>
+
+
+<template name="route_table">
+  <div class='route-table'>
+    <table>
+      <tbody>
+        {{#isolate}}
+        {{#if mainRoute}}
+        <tr class="{{maybe_selected}}">
+          <td style="width:25%"><b>Direct Route</b></td>
+          <td style="width:35%">{{mainRoute.summary}}</td>
+          <td style="width:25%"> <div class='timeline'><div class='full-trip' style='width:{{mainRoute.pctTrip}}%;background-color:#B8B8B8'></div></div></td>
+          <td style="width:15%">Takes {{mainRoute.totalTimeText}} </td>
+        </tr>
+        {{/if}}
+        {{#each placeOptions}}
+        <tr class="{{maybe_selected}}">
+          <td>{{this.name}}</td>
+          <td>{{this.vicinity}}</td>
+          <!-- <td>Time to: {{this.durationTo.text}}</td> -->
+          <!-- <td>Time from: {{this.durationFrom.text}}</td> -->
+          <!-- <td>Total time: {{human_time this.totalTime}}</td> -->
+          <td> <div class='timeline'><div class='full-trip' style='width:{{this.pctTrip}}%'><div style="width:{{this.pctFirst}}%" class='leg first-leg'>{{this.durationTo.text}}</div><div style="width:{{this.pctSecond}}%" class='leg second-leg'>{{this.durationFrom.text}}</div></div></div></td>
+          <td>Adds {{human_time this.timeAdded}} </td>
+        </tr>
+        {{else}}
+        <!-- can put somethign else here -->
+        {{/each}} 
+        {{/isolate}}
+      </tbody>
+    </table>
+  </div>
+</template>
