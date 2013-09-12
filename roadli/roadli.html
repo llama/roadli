@@ -1,6 +1,11 @@
 <head>
   <title>Roadli</title>
   <script type='text/javascript' src='assets/vendor/prefixfree.min.js'></script>
+  <meta name="description" content="Find the fastest route via any kind of business, or find places/POIs along your route. E.g. what's the fastest route from Boston to Providence that includes a McDonalds?">
+  <meta name="keywords" content="fastest route,poi,maps,optimal,along route,via location,via place,via business,find along route,poi,pois,best route,adds least time,find on way">
+
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+
 </head>
 
 <body>
@@ -11,27 +16,27 @@
   <div class='wrapper'>
     <div class="form">
       <div class='header' style="margin-bottom:5px">
-        <img src="logo.png" style="width:34%;margin-top:15px" alt="Roadli">
+        <a href="/"><img src="logo.png" style="width:34%;margin-top:15px" alt="Roadli"></a>
         <!-- <h1>Roadli</h1> -->
-        <div class="instruct" style="margin-bottom:2%">Get the fastest route via a location.</div>
+        <div class="instruct" style="margin-bottom:2%">Get the fastest route via a location type.</div>
       </div>
       <div class='instruct'>Go from</div>
       <input type="text" id="from-place"></input><br>
       <div class='instruct'>to</div>
       <input type="text" id="to-place"></input>
       <div class='instruct' id="via-a">via a</div>
-      <input type="text" id="via-place" onkeyup="if (['a','e','i','o','u'].indexOf(this.value[0])>-1) {$('#via-a').text('via an')} else if ($('#via-a').text() == 'via an') {$('#via-a').text('via a')}"></input>
-      {{#isolate}}
-      {{#if link}}
-      <br><a style="font-size:18px" href="{{link}}" target="_blank">Open this route in Google Maps</a>
-      {{/if}}
-      {{/isolate}}
+      <input type="text" placeholder="e.g. McDonalds, Hardware Store, etc." id="via-place" onkeyup="if (['a','e','i','o','u'].indexOf(this.value[0])>-1) {$('#via-a').text('via an')} else if ($('#via-a').text() == 'via an') {$('#via-a').text('via a')}"></input>
+      <!-- <button class="button">Go</button> -->
     </div>
     {{#constant}}
-    <div id="map-canvas" style="float:right;width:50%;height:100%"></div>
+    <div id="map-canvas"></div>
     {{/constant}}
   </div>
+  {{#if mainRoute}}
   {{> route_table}}
+  {{else}}
+  {{> faq}}
+  {{/if}}
 </div>
 
 
@@ -49,17 +54,15 @@
     <table>
       <tbody>
         {{#isolate}}
-        {{#if mainRoute}}
         <tr class="{{maybe_selected}}">
-          <td style="width:25%"><b>Direct Route</b></td>
+          <td style="width:25%"><b>Direct Route</b><div class="mapslink-inline"><a href="{{link}}" target="_blank">Open this route in Google Maps</a></div></td>
           <td style="width:35%">{{mainRoute.summary}}</td>
           <td style="width:25%"> <div class='timeline'><div class='full-trip' style='width:{{mainRoute.pctTrip}}%;background-color:#B8B8B8'></div></div></td>
           <td style="width:15%">Takes {{mainRoute.totalTimeText}} </td>
         </tr>
-        {{/if}}
         {{#each placeOptions}}
         <tr class="{{maybe_selected}}">
-          <td>{{this.name}}</td>
+          <td>{{this.name}}<div class="mapslink-inline"><a href="{{link}}" target="_blank">Open this route in Google Maps</a></div></td>
           <td>{{this.vicinity}}</td>
           <!-- <td>Time to: {{this.durationTo.text}}</td> -->
           <!-- <td>Time from: {{this.durationFrom.text}}</td> -->
@@ -73,5 +76,24 @@
         {{/isolate}}
       </tbody>
     </table>
+  </div>
+</template>
+
+
+<template name="faq">
+  <div class="faq">
+    <h2>What is this?</h2>
+    Enter your starting and ending locations, as well as the type of place where you'd like to stop on the way, and Roadli will show you the fastest route options.
+
+    <h2>Examples?</h2>
+    <!-- Switch to fade between options -->
+    <a href='/?start=Palo%20Alto&end=San%20Francisco&via=Liquor%20Store'>Palo Alto to San Francisco, via a Liquor Store</a><br>
+    <a href='/?start=Boston&end=Providence&via=McDonalds'>Boston to Providence, via a McDonalds</a><br>
+
+    <h2>Doesn't Google Maps do this?</h2>
+    Surprisingly, it does not. And nothing else does it very well.
+
+    <h2>I found a bug / want a feature / have a question.</h2>
+    Awesome. <a href="mailto:doug@road.li">Email me!</a>
   </div>
 </template>

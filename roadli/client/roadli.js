@@ -6,13 +6,28 @@ var boxes = null;
 var placemarkers = {};
 var selectedplaceinfo;
 var ginfowindow;
+var $is_mobile;
 
 calcRoute = function(viaplace,vianame) {
-  console.log('calcing route');
-  if (!document.getElementById('from-place')) return;
+
+  // if (!document.getElementById('from-place')) return;
   var start = document.getElementById('from-place').value;
   var end = document.getElementById('to-place').value;
+
+  if (!start || !end) return;
+
+  // debouncing
+  // if (start == Session.get('oldstart') && end == Session.get('oldend')) return;
+  // Session.set('oldstart',start);
+  // Session.set('oldend',end);
+
+  console.log('calcing route');
+
+
   var waypts = [];
+
+  if (start) updateQueryStringParameter('start',start);
+  if (end) updateQueryStringParameter('end',end);
 
   if (viaplace) {
     waypts.push({location:viaplace,stopover:true});
@@ -22,6 +37,8 @@ calcRoute = function(viaplace,vianame) {
   if (viaplace) {
     dest = vianame + ', '+viaplace + ' to:' + dest;
   }
+
+  window._gaq.push(['_trackEvent','CalcRoute','','']);
   var link = 'https://maps.google.com/maps?saddr=' + encodeURIComponent(start) + '&daddr=' + encodeURIComponent(dest);
   
   var request = {
@@ -34,9 +51,14 @@ calcRoute = function(viaplace,vianame) {
   directionsService.route(request, function(response, status) {
     // console.log(response,status);
     if (status == google.maps.DirectionsStatus.OK) {
+      var route = response.routes[0];
+      if (route.legs[0].distance.value > 300000) {
+        alert('Roadli currently only supports trips shorter than 300 km');
+        return;
+      }
+
       Session.set('mapslink',link);
       directionsDisplay.setDirections(response);
-      var route = response.routes[0];
       // var summaryPanel = document.getElementById('directions_panel');
       // summaryPanel.innerHTML = '';
 
@@ -49,10 +71,10 @@ calcRoute = function(viaplace,vianame) {
         boxes = rboxer.box(path, DISTANCE_FROM_RT);
         // drawBoxes(boxes); // draw boxes for debug purposes
       }
+
       Session.set('currentRoute',route);
 
       // For each route leg, display summary information.
-      console.log('newbounds');
     //   for (var i = 0; i < route.legs.length; i++) {
     //     var routeSegment = i + 1;
     //     summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment + '</b><br>';
@@ -63,7 +85,7 @@ calcRoute = function(viaplace,vianame) {
   } else {
     console.error("DirectionsService failed with status: " + status);
   };
-});
+  });
 };
 
 getTimeForVia = function(place,timeTable) {
@@ -98,34 +120,44 @@ getTimeForVia = function(place,timeTable) {
 Template.route_table.events({
   'click .route-table tr' : function() {
     Session.set('selected-place',this.id);
+    window._gaq.push(['_trackEvent','ClickRoute','','']);
   },
   'mouseenter .route-table tr' : function() {
     Session.set('hover-place',this.id);
 
   },
-  'mouseleave .route-table tr' : function() {
+  'mouseleave .route-table' : function() {
     Session.set('hover-place',null);
   }
 });
 
 Deps.autorun(function() {
-  var hid = Session.get('hover-place');
-  if (!hid || !placemarkers[hid]) return;
-  var icon = placemarkers[hid].icon;
-  icon.scaledSize = new google.maps.Size(45, 45);
-  icon.anchor = new google.maps.Point(26, 44);
-  placemarkers[hid].setIcon(icon);
-  Deps.currentComputation.hid = hid;
-  Deps.currentComputation.onInvalidate(function(c) {
-    var icon = placemarkers[c.hid].icon;
-    icon.scaledSize = new google.maps.Size(25,25);
-    icon.anchor = new google.maps.Point(17,34);
-    placemarkers[c.hid].setIcon(icon);
-  });
+  if (!$is_mobile) {
+    var hid = Session.get('hover-place');
+    if (!hid || !placemarkers[hid]) return;
+    var icon = placemarkers[hid].icon;
+    icon.scaledSize = new google.maps.Size(45, 45);
+    icon.anchor = new google.maps.Point(26, 44);
+    placemarkers[hid].setIcon(icon);
+    Deps.currentComputation.hid = hid;
+    Deps.currentComputation.onInvalidate(function(c) {
+      var icon = placemarkers[c.hid].icon;
+      icon.scaledSize = new google.maps.Size(25,25);
+      icon.anchor = new google.maps.Point(17,34);
+      placemarkers[c.hid].setIcon(icon);
+    });
+  }
 });
 
 Deps.autorun(function() {
   var spid = Session.get('selected-place');
+
+  if (spid) {
+    // updateQueryStringParameter('selected',spid);
+  } else if (getParameterByName('selected')) { // not sure why i need this
+    // updateQueryStringParameter('selected','');
+  }
+
   if (!spid || !google) {
     // direct route selected
     setTimeout(calcRoute,100);
@@ -155,9 +187,13 @@ Handlebars.registerHelper('human_time', function(secs) {
 });
 
 
-Template.main.link = function() {
+Template.route_table.link = function() {
   return Session.get('mapslink');
 };
+
+Template.main.place_selected = function() {
+  return Session.get('selected-place');
+}
 
 Template.route_table.placeOptions = function() {
   var mr = Session.get('mainRoute');
@@ -195,30 +231,50 @@ Template.route_table.placeOptions = function() {
   return rres;
 }
 
-Template.route_table.mainRoute = function() {
+var mainRoute = function() {
   var mr = Session.get('mainRoute');
   if (!mr) return;
   mr.totalTimeText = mr.legs[0].duration.text;
   return mr;
 }
 
+Template.route_table.mainRoute = mainRoute;
+Template.main.mainRoute = mainRoute;
+
+Template.main.rendered = function() {
+  $('h1').fitText();
+  $('.instruct').fitText(4);
+  $('.form input').fitText(2.5);
+}
+
 Meteor.startup( function() {
+  var $is_mobile = false;
+  if( $('#map-canvas').css('display') == 'none' ) {
+      $is_mobile = true;      
+  }
+
   console.log('starting up!');
+
+  var s = getParameterByName('start');
+  var e = getParameterByName('end');
+  var v = getParameterByName('via');
+  // var c = getParameterByName('selected');
+  if (s) $('terfrom-place').val(s);
+  if (e) {$('#to-place').val(e);setTimeout(calcRoute,1000);}
+  if (v) {$('#via-place').val(v);setTimeout(findPlaces,2000);}
+  // if (c) {Session.set('selected-place',c)};
+
   function loadScript() {
     var script = document.createElement("script");
     script.type = "text/javascript";
     script.src = 'http://maps.googleapis.com/maps/api/js?key='+G_API_KEY+'&sensor=false&callback=goog&libraries=places,adsense';
-    console.log(script.src);
     document.body.appendChild(script);
   }
   window.onload = loadScript;
   Session.set('mapslink',null);
   Session.set('viaplace',null);
   $('#from-place').focus();
-
-  $('h1').fitText();
-  $('.instruct').fitText(4);
-  $('.form input').fitText(2.5);
+  
   $('.form a').fitText();
 
   if (!Session.get('udat')) {
@@ -227,6 +283,33 @@ Meteor.startup( function() {
         Session.set('udat',data);
       });
   }
+
+
+
+  $('#from-place').blur(function() {
+    // calcRoute(null);
+    // setTimeout(findPlaces,100);
+  })
+
+  $('#to-place').blur(function() {
+    calcRoute(null);
+    // setTimeout(findPlaces,100);
+  })
+
+  $('#via-place').blur(function() {
+    // calcRoute(null);
+    setTimeout(findPlaces,100);
+  })
+
+  $('#via-place').bind('keypress', function(e) {
+    var code = (e.keyCode ? e.keyCode : e.which);
+    if (code == 13) {
+      hideAndroidKeyboard($(this));
+      setTimeout(findPlaces,100); // on enter
+    }
+  });
+
+
 
 });
 
@@ -269,7 +352,8 @@ goog = function() {
 
   Deps.autorun(function() {
     var data = Session.get('udat');
-    map.setCenter(new google.maps.LatLng(parseFloat(data.lat), parseFloat(data.lon)));
+    // console.log(data);
+    if (data && data.lon && data.lat) map.setCenter(new google.maps.LatLng(parseFloat(data.lat), parseFloat(data.lon)));
   });
 
   directionsDisplay.setMap(map);
@@ -337,26 +421,42 @@ addAutocompleteToInput(document.getElementById('from-place'));
 addAutocompleteToInput(document.getElementById('to-place'));
 
 
-  // setup VIA autocomplete
-  var input = (document.getElementById('via-place'));
-  autoSelectOnTab(input);
-  var searchBox = new google.maps.places.SearchBox(input);
+  // setup VIA autocomplete (currently disabled) 
+  // var input = (document.getElementById('via-place')); 
+  // autoSelectOnTab(input);
+  // var searchBox = new google.maps.places.SearchBox(input);
+  // searchBox.setTypes(['establishment']);
 
-  // called whenever user SELECTS a VIA place
-  google.maps.event.addListener(searchBox, 'places_changed', function() {
-    console.log('places_changed');
-    findPlaces();
-  });
+  // // called whenever user SELECTS a VIA place
+  // google.maps.event.addListener(searchBox, 'places_changed', function() {
+  //   console.log('places_changed');
+  //   findPlaces();
+  // });
 
-  google.maps.event.addListener(map, 'bounds_changed', function() {
-    var bounds = map.getBounds();
-    searchBox.setBounds(bounds);
-  });
+  // google.maps.event.addListener(map, 'bounds_changed', function() {
+  //   var bounds = map.getBounds();
+  //   searchBox.setBounds(bounds);
+  // });
 
 };
 
 
-var findPlaces = function() {
+findPlaces = function() {
+
+  var start = document.getElementById('from-place').value;
+  var end = document.getElementById('to-place').value;
+  var viaplace = document.getElementById('via-place').value;
+
+  if (!viaplace || !start || !end) return;
+
+  // debounce
+  if (viaplace == Session.get('oldfindviaplace') && start == Session.get('oldfindstart') && end == Session.get('oldfindend')) return;
+  Session.set('oldfindstart',start);
+  Session.set('oldfindend',end);
+  Session.set('oldfindviaplace',viaplace);
+
+  updateQueryStringParameter('via',viaplace);
+
   /*  Clear old places from map. For the current from-place, to-place, via-place, find places along route.  */
 
   // clear all old markers
@@ -367,10 +467,12 @@ var findPlaces = function() {
 
   Session.set('placeOptions',{});
 
+  if (!boxes) return;  
+
   for (var i = 0; i < boxes.length; i++) {
     var request = {
       bounds: boxes[i],
-      keyword: document.getElementById('via-place').value
+      keyword: viaplace
         // types: ['store']
     };
 
@@ -430,7 +532,7 @@ var findPlaces = function() {
       var ids = [];
       var placeLocs = [];
       for (var i=0,place; place=results[i];i++) {
-        placeLocs.push(new google.maps.LatLng(place.geometry.location.jb, place.geometry.location.kb));
+        placeLocs.push(place.geometry.location);
         ids.push(place.id);
       };
       var service = new google.maps.DistanceMatrixService();
@@ -443,7 +545,7 @@ var findPlaces = function() {
           // durationInTraffic: Boolean, // available to maps for business only
           // avoidHighways: false,
           // avoidTolls: false
-        }, callbackToC(ids));
+        }, distanceMatrixCallback(ids,'To'));
       service.getDistanceMatrix(
       {
         destinations: [document.getElementById('to-place').value],
@@ -453,7 +555,7 @@ var findPlaces = function() {
           // durationInTraffic: Boolean, // available to maps for business only
           // avoidHighways: false,
           // avoidTolls: false
-        },callbackFromC(ids));
+        },distanceMatrixCallback(ids,'From'));
     } else {
       if (status == "ZERO_RESULTS") return;
       console.error('NearbySearch failed with status: ' + status);
@@ -464,45 +566,33 @@ var findPlaces = function() {
 
 
 
-var callbackFromC = function(ids) {
+var distanceMatrixCallback = function(ids,propsToSet) {
   return function(response, status) {
+    // console.log('DM RESPONSE:' + JSON.stringify(response));
+    // console.log('DM STATUS:' + JSON.stringify(status));
+
     var placeDict = Session.get('placeOptions');
 
     if (status !== 'OK') {
       console.error('Distance Matrix Status: ' + status);
       return;
     };
-      // fingers crossed order hasnt changed
-      for (var i=0,placeid;placeid=ids[i];i++) {
-        var el = response.rows[i].elements[0];
-        if (el.status != 'OK') {
-          console.error('Distance Matrix Element Status: ' + status);
-          continue;
-        };
-        placeDict[placeid].durationFrom = el.duration;
-        placeDict[placeid].distanceFrom = el.distance;
-      };
-      Session.set('placeOptions',placeDict);
-    }
-  };
-
-  var callbackToC = function(ids) {
-    return function(response, status) {
-      var placeDict = Session.get('placeOptions');
-      if (status !== 'OK') {
-        console.error('Distance Matrix Status: ' + status);
-        return;
-      };
     // fingers crossed order hasnt changed
     for (var i=0,placeid;placeid=ids[i];i++) {
-      var el = response.rows[0].elements[i];
-      if (el.status != 'OK') {
-        console.error('Distance Matrix Element Status: ' + status);
-        continue;
+      var el;
+      if (propsToSet == 'To') {
+        el = response.rows[0].elements[i];
+      } else {
+        el = response.rows[i].elements[0];
       }
-      placeDict[placeid].durationTo = el.duration;
-      placeDict[placeid].distanceTo = el.distance;
+      if (el.status != 'OK') {
+        console.error('Distance Matrix Element Status: ' + el.status);
+        continue;
+      };
+      placeDict[placeid]['duration'+propsToSet] = el.duration; // eww, w/e, so this sets either "place.durationTo" or "place.durationFrom"
+      placeDict[placeid]['distance'+propsToSet] = el.distance;
     };
     Session.set('placeOptions',placeDict);
   }
 };
+

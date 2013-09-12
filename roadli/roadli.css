@@ -8,6 +8,43 @@ html, body {
   color:#262626;
 }
 
+/* PHONES */
+@media screen and (max-device-width: 480px) {
+  body .form {
+    width:100%;
+    height:auto;
+    overflow:hidden;
+  }
+  body #map-canvas {
+    width:100%;
+    float:left;
+    height:0px;
+    display:none;
+  }
+
+  body .wrapper {
+    height:auto;
+  }
+
+  body .route-table {
+    max-height:none;
+    font-size:10px;
+    overflow:hidden;
+  }
+
+  body .mapslink-inline {
+    font-size:8px;
+  }
+
+  body .leg {
+    display:none;
+  }
+}
+
+ 
+
+
+
 body {
     font-family:Helvetica;
     color:rgba(0,0,0,0.7);
@@ -16,6 +53,13 @@ body {
 h1 {
     font-size:80px;
     margin:0 auto 0 auto;
+}
+
+
+#map-canvas {
+  float:right;
+  width:50%;
+  height:100%;
 }
 
 .instruct {
@@ -87,14 +131,14 @@ h1 {
 
 input {
     width:80%;
-    font-size:30px;
+    font-size:28px;
     margin-bottom:2%;
     text-align:center;
 }
 
 a {
     /*text-decoration: none;*/
-    color:black;
+    color:inherit;
 }
 
 
@@ -134,6 +178,16 @@ a {
   text-align:right;
 }
 
+.faq {
+  margin: 0 auto 0 auto;
+  width:80%;
+  font-size:20px;
+}
+
+.faq h2 {
+  margin-bottom:5px;
+  font-size:23px;
+}
 
 /* from isv */
 button.button:disabled {
@@ -141,16 +195,16 @@ button.button:disabled {
     cursor:default;
 }
 button.button {
+    width:325px;
+    height: 40px;
+    line-height: 40px;
     background-color: #26bf4a;
     color: white;
-    font-size:30px;
+    font-size:20px;
     cursor: pointer;
     display: inline-block;
-    height: 70px;
     letter-spacing: 2px;
-    line-height: 70px;
     margin: 0 auto 0 auto;
-    width:425px;
     overflow: hidden;
     font-weight:300;
     left:0;
@@ -179,6 +233,15 @@ button.button.blue:hover:enabled,button.button.blue:focus {
     background-color:#22A;
 }
 
+
+.mapslink-inline {
+  display:none;
+  font-size:14px;
+}
+
+.selected .mapslink-inline {
+  display:block;
+}
 
 /*goog*/
 
