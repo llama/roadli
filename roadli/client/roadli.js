@@ -76,7 +76,7 @@ calcRoute = function(viaplace,vianame) {
 
         dist = route.legs[0].distance.value/ROUTE_DISTANCE_DIVISOR;
         boxes = rboxer.box(path, dist);
-        drawBoxes(boxes); // draw boxes for debug purposes
+        // drawBoxes(boxes); // draw boxes for debug purposes
       }
 
       Session.set('currentRoute',route);
