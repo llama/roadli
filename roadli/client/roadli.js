@@ -16,11 +16,7 @@ calcRoute = function(viaplace,vianame) {
 
   if (!start || !end) return;
 
-  // debouncing
-  // if (start == Session.get('oldstart') && end == Session.get('oldend')) return;
-  // Session.set('oldstart',start);
-  // Session.set('oldend',end);
-
+ 
   console.log('calcing route');
 
 
@@ -46,7 +42,7 @@ calcRoute = function(viaplace,vianame) {
     destination: end,
     waypoints: waypts,
     optimizeWaypoints: false, // allow reordering
-    travelMode: google.maps.TravelMode.DRIVING
+    travelMode: google.maps.TravelMode[Session.get('selected-tmode')]
   };
   directionsService.route(request, function(response, status) {
     // console.log(response,status);
@@ -96,7 +92,7 @@ getTimeForVia = function(place,timeTable) {
     origin: start,
     destination: end,
     optimizeWaypoints: false, // allow reordering
-    travelMode: google.maps.TravelMode.DRIVING
+    travelMode: google.maps.TravelMode[Session.get('selected-tmode')]
   };
   if (place) {
     request.waypoints = [{location:place,stopover:true}]
@@ -116,6 +112,16 @@ getTimeForVia = function(place,timeTable) {
     }
   });
 };
+
+Template.main.events({
+  'click .tmode' : function() {
+    Session.set('selected-tmode',this.constant);
+    setTimeout(calcRoute,1000);
+    Session.set('placeOptions',{});
+    setTimeout(findPlaces,2000);
+    window._gaq.push(['_trackEvent','ChangeMode',this.constant,'']);
+  }
+})
 
 Template.route_table.events({
   'click .route-table tr' : function() {
@@ -195,6 +201,20 @@ Template.main.place_selected = function() {
   return Session.get('selected-place');
 }
 
+Template.main.travel_modes = [
+  {image: 'tmodecar.png',constant:'DRIVING',alt:'Car',topmargin:0},
+  {image: 'tmodebike.png',constant:'BICYCLING',alt:'Bike',topmargin:0},
+  {image: 'tmodewalk.png',constant:'WALKING',alt:'Walking',topmargin:3}
+  // {image: 'tmodebus.png',constant:'TRANSIT',alt:'Transit',topmargin:5}
+];
+
+Template.main.tmode_selected = function() {
+  if (Session.equals('selected-tmode',this.constant)) {
+    return 'selected';
+  }
+  return '';
+}
+
 Template.route_table.placeOptions = function() {
   var mr = Session.get('mainRoute');
 
@@ -253,6 +273,7 @@ Meteor.startup( function() {
       $is_mobile = true;      
   }
 
+  Session.set('selected-tmode','DRIVING');
   console.log('starting up!');
 
   var s = getParameterByName('start');
@@ -328,13 +349,11 @@ goog = function() {
 
 
   setTimeout(function() {
-    console.log('hi');
     if (typeof google.loader !== 'undefined' && typeof google.loader.ClientLocation !== 'undefined') {
-      console.log('ho');
       var center = new google.maps.LatLng(google.loader.ClientLocation.latitude, google.loader.ClientLocation.longitude);
       map.setCenter(center);
     };
-  },1000);
+  },700);
 
   var mapOptions = {
     zoom: 10,
@@ -461,10 +480,11 @@ findPlaces = function() {
   if (!viaplace || !start || !end) return;
 
   // debounce
-  if (viaplace == Session.get('oldfindviaplace') && start == Session.get('oldfindstart') && end == Session.get('oldfindend')) return;
+  if (viaplace == Session.get('oldfindviaplace') && start == Session.get('oldfindstart') && end == Session.get('oldfindend') && Session.get('selected-tmode') == Session.get('oldtmode')) return;
   Session.set('oldfindstart',start);
   Session.set('oldfindend',end);
   Session.set('oldfindviaplace',viaplace);
+  Session.set('oldtmode',Session.get('selected-tmode'));
 
   updateQueryStringParameter('via',viaplace);
 
@@ -551,7 +571,7 @@ findPlaces = function() {
       {
         origins: [document.getElementById('from-place').value],
         destinations: placeLocs,
-        travelMode: google.maps.TravelMode.DRIVING,
+        travelMode: google.maps.TravelMode[Session.get('selected-tmode')],
           // unitSystem: google.maps.UnitSystem.IMPERIAL,
           // durationInTraffic: Boolean, // available to maps for business only
           // avoidHighways: false,
@@ -561,7 +581,7 @@ findPlaces = function() {
       {
         destinations: [document.getElementById('to-place').value],
         origins: placeLocs,
-        travelMode: google.maps.TravelMode.DRIVING,
+        travelMode: google.maps.TravelMode[Session.get('selected-tmode')],
           // unitSystem: google.maps.UnitSystem.IMPERIAL,
           // durationInTraffic: Boolean, // available to maps for business only
           // avoidHighways: false,

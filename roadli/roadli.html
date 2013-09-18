@@ -14,6 +14,12 @@
 
 <template name="main">
   <div class='wrapper'>
+    <div class="travel-mode" style="position:absolute;top:10px;left:10px;">
+      {{#each travel_modes}}
+      <img src={{this.image}} class="tmode {{tmode_selected}}" style="width:32px;margin-top:{{this.topmargin}}px" alt={{this.alt}}><br>
+      {{/each}}
+    </div>
+
     <div class="form">
       <div class='header' style="margin-bottom:5px">
         <a href="/"><img src="logo.png" style="width:34%;margin-top:15px" alt="Roadli"></a>

@@ -41,8 +41,6 @@ html, body {
   }
 }
 
- 
-
 
 
 body {
@@ -127,6 +125,17 @@ h1 {
   background-color:#AECFFE;
 }
 
+.tmode {
+  cursor: pointer;
+  padding:2px;
+}
+
+.tmode.selected {
+  border:2px;
+  margin:-2px;
+  border-style:solid;
+  border-radius:6px;
+}
 
 
 input {
