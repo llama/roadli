@@ -1,7 +1,8 @@
 var G_API_KEY = 'AIzaSyBFp14Fv8ZVBJe7nrdRXcnGnTA-4WpcjX8';
 var ADSENSE_PUBLISHER_ID = 'pub-1528594420112252';
 var GMAPS_VISUAL_REFRESH = true;
-var DISTANCE_FROM_RT = 4; // km
+// var DISTANCE_FROM_RT = 3; // km
+var ROUTE_DISTANCE_DIVISOR = 13000; // route distane in m / this == distance from route to search
 var boxes = null;
 var placemarkers = {};
 var selectedplaceinfo;
@@ -72,8 +73,10 @@ calcRoute = function(viaplace,vianame) {
         // Box the overview path of the first route
         var rboxer = new RouteBoxer();
         var path = route.overview_path;
-        boxes = rboxer.box(path, DISTANCE_FROM_RT);
-        // drawBoxes(boxes); // draw boxes for debug purposes
+
+        dist = route.legs[0].distance.value/ROUTE_DISTANCE_DIVISOR;
+        boxes = rboxer.box(path, dist);
+        drawBoxes(boxes); // draw boxes for debug purposes
       }
 
       Session.set('currentRoute',route);
@@ -363,7 +366,7 @@ goog = function() {
       var center = new google.maps.LatLng(google.loader.ClientLocation.latitude, google.loader.ClientLocation.longitude);
       map.setCenter(center);
     };
-  },700);
+  },400);
 
   var mapOptions = {
     zoom: 10,
