@@ -35,7 +35,15 @@ calcRoute = function(viaplace,vianame) {
   }
 
   window._gaq.push(['_trackEvent','CalcRoute','','']);
-  var link = 'https://maps.google.com/maps?saddr=' + encodeURIComponent(start) + '&daddr=' + encodeURIComponent(dest);
+
+  var dirflg;
+  for (var i=0;i<travelmodes.length;i++) {
+    if (travelmodes[i].constant == Session.get('selected-tmode')) {
+      dirflg = travelmodes[i].dirflg; 
+    }
+  }
+
+  var link = 'https://maps.google.com/maps?saddr=' + encodeURIComponent(start) + '&daddr=' + encodeURIComponent(dest) + '&dirflg=' + dirflg;
   
   var request = {
     origin: start,
@@ -201,12 +209,14 @@ Template.main.place_selected = function() {
   return Session.get('selected-place');
 }
 
-Template.main.travel_modes = [
-  {image: 'tmodecar.png',constant:'DRIVING',alt:'Car',topmargin:0},
-  {image: 'tmodebike.png',constant:'BICYCLING',alt:'Bike',topmargin:0},
-  {image: 'tmodewalk.png',constant:'WALKING',alt:'Walking',topmargin:3}
-  // {image: 'tmodebus.png',constant:'TRANSIT',alt:'Transit',topmargin:5}
+travelmodes = [
+  {image: 'tmodecar.png',constant:'DRIVING',alt:'Car',topmargin:0, dirflg:'d'},
+  {image: 'tmodebike.png',constant:'BICYCLING',alt:'Bike',topmargin:0, dirflg:'b'},
+  {image: 'tmodewalk.png',constant:'WALKING',alt:'Walking',topmargin:3, dirflg:'w'}
+  // {image: 'tmodebus.png',constant:'TRANSIT',alt:'Transit',topmargin:5,dirflg:'r'} // DOESNT WORK with distance matrix or google link
 ];
+
+Template.main.travel_modes = travelmodes;
 
 Template.main.tmode_selected = function() {
   if (Session.equals('selected-tmode',this.constant)) {
@@ -273,7 +283,7 @@ Meteor.startup( function() {
       $is_mobile = true;      
   }
 
-  Session.set('selected-tmode','DRIVING');
+  Session.set('selected-tmode','DRIVING');  
   console.log('starting up!');
 
   var s = getParameterByName('start');
