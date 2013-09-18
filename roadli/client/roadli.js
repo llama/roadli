@@ -280,6 +280,7 @@ Meteor.startup( function() {
   if (!Session.get('udat')) {
     $.getJSON('http://ip-api.com/json/?callback=?', // NEED NEW SOLUTION for ssl httbin?
       function(data){
+        console.log(data)
         Session.set('udat',data);
       });
   }
@@ -325,11 +326,20 @@ goog = function() {
   directionsDisplay = new google.maps.DirectionsRenderer();
   directionsDisplay.setOptions({suppressMarkers:false});
 
-  var chicago = new google.maps.LatLng(41.850033, -87.6500523);
+
+  setTimeout(function() {
+    console.log('hi');
+    if (typeof google.loader !== 'undefined' && typeof google.loader.ClientLocation !== 'undefined') {
+      console.log('ho');
+      var center = new google.maps.LatLng(google.loader.ClientLocation.latitude, google.loader.ClientLocation.longitude);
+      map.setCenter(center);
+    };
+  },1000);
+
   var mapOptions = {
     zoom: 10,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
-    center: chicago
+    center: new google.maps.LatLng(41.850033, -87.6500523) // chicago
   };
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
@@ -350,11 +360,12 @@ goog = function() {
   adUnit = new google.maps.adsense.AdUnit(adUnitDiv, adUnitOptions);
   // / ads
 
-  Deps.autorun(function() {
-    var data = Session.get('udat');
-    // console.log(data);
-    if (data && data.lon && data.lat) map.setCenter(new google.maps.LatLng(parseFloat(data.lat), parseFloat(data.lon)));
-  });
+  // Deps.autorun(function() {
+  //   var data = Session.get('udat');
+  //   // disabled cause clientlocation
+  //   // console.log(data);
+  //   if (data && data.lon && data.lat) map.setCenter(new google.maps.LatLng(parseFloat(data.lat), parseFloat(data.lon)));
+  // });
 
   directionsDisplay.setMap(map);
   ginfowindow = new google.maps.InfoWindow();
