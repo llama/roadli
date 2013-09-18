@@ -35,7 +35,7 @@ calcRoute = function(viaplace,vianame) {
     dest = vianame + ', '+viaplace + ' to:' + dest;
   }
 
-  window._gaq.push(['_trackEvent','CalcRoute','','']);
+  window._gaq.push(['_trackEvent','CalcRoute','CalcRoute','']);
 
   var dirflg;
   for (var i=0;i<travelmodes.length;i++) {
@@ -137,7 +137,7 @@ Template.main.events({
 Template.route_table.events({
   'click .route-table tr' : function() {
     Session.set('selected-place',this.id);
-    window._gaq.push(['_trackEvent','ClickRoute','','']);
+    window._gaq.push(['_trackEvent','ClickRoute','someRoute','']);
   },
   'mouseenter .route-table tr' : function() {
     Session.set('hover-place',this.id);
@@ -312,7 +312,8 @@ Meteor.startup( function() {
   $('.form a').fitText();
 
   if (!Session.get('udat')) {
-    $.getJSON('http://ip-api.com/json/?callback=?', // NEED NEW SOLUTION for ssl httbin?
+    // $.getJSON('http://ip-api.com/json/?callback=?', // NEED NEW SOLUTION for ssl httbin?
+      $.getJSON('https://freegeoip.net/json/?callback=?',
       function(data){
         console.log(data)
         Session.set('udat',data);
@@ -361,12 +362,12 @@ goog = function() {
   directionsDisplay.setOptions({suppressMarkers:false});
 
 
-  setTimeout(function() {
-    if (typeof google.loader !== 'undefined' && typeof google.loader.ClientLocation !== 'undefined') {
-      var center = new google.maps.LatLng(google.loader.ClientLocation.latitude, google.loader.ClientLocation.longitude);
-      map.setCenter(center);
-    };
-  },400);
+  // setTimeout(function() {
+  //   if (typeof google.loader !== 'undefined' && typeof google.loader.ClientLocation !== 'undefined') {
+  //     var center = new google.maps.LatLng(google.loader.ClientLocation.latitude, google.loader.ClientLocation.longitude);
+  //     map.setCenter(center);
+  //   };
+  // },400);
 
   var mapOptions = {
     zoom: 10,
@@ -392,12 +393,10 @@ goog = function() {
   adUnit = new google.maps.adsense.AdUnit(adUnitDiv, adUnitOptions);
   // / ads
 
-  // Deps.autorun(function() {
-  //   var data = Session.get('udat');
-  //   // disabled cause clientlocation
-  //   // console.log(data);
-  //   if (data && data.lon && data.lat) map.setCenter(new google.maps.LatLng(parseFloat(data.lat), parseFloat(data.lon)));
-  // });
+  Deps.autorun(function() {
+    var data = Session.get('udat');
+    if (data && data.longitude && data.latitude) map.setCenter(new google.maps.LatLng(parseFloat(data.latitude), parseFloat(data.longitude)));
+  });
 
   directionsDisplay.setMap(map);
   ginfowindow = new google.maps.InfoWindow();

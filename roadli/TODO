@@ -1,14 +1,12 @@
 TODO
 
--dynamic distance from rt
--transit mode in URL
--debug location sensing
+-transit mode blocking form on mobile
+
+-poi list for via autocomplete
 -email list
+
 -troubleshoot debouncing
--selected in url
 -troubleshoot slow mousing
--troubleshoot "flow"
--troubleshoot link attention
--markers on start and end point type
--remove addessees from via autocomplete
--mouseout sluggish
+
+-transit mode in URL
+-selected in url

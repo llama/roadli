@@ -125,9 +125,14 @@ h1 {
   background-color:#AECFFE;
 }
 
+.travel-mode {
+  width:2.5%;
+}
+
 .tmode {
   cursor: pointer;
   padding:2px;
+  width:100%;
 }
 
 .tmode.selected {
