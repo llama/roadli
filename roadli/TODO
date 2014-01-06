@@ -1,12 +1,13 @@
 TODO
 
--transit mode blocking form on mobile
-
--poi list for via autocomplete
 -email list
+-facebook like button
+-poi list for via autocomplete
 
 -troubleshoot debouncing
 -troubleshoot slow mousing
 
 -transit mode in URL
 -selected in url
+
+-better tmode selection on mobile
