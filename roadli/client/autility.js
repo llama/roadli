@@ -37,6 +37,7 @@ hideAndroidKeyboard = function(element) {
 
 
 autoSelectOnTab = function(input) {
+    // return;
     (function pacSelectFirst(input) {
         // store the original event binding function
         var _addEventListener = (input.addEventListener) ? input.addEventListener : input.attachEvent;
@@ -47,7 +48,7 @@ autoSelectOnTab = function(input) {
             if (type == "keydown") {
                 var orig_listener = listener;
                 listener = function(event) {
-                    var suggestion_selected = $(".pac-selected").length > 0;
+                    var suggestion_selected = $(".pac-item-selected").length > 0;
                     
                     // enter or tab
                     if ((event.which == 9 || event.which == 13) && !suggestion_selected) {

@@ -1,9 +1,8 @@
 TODO
 
--fix tmode eimagse
 -fix autocomplete
--scrub code for bad things
 -github + fork me!
+-hn post
 
 
 XXXXXXX
@@ -14,7 +13,6 @@ XXXXXXX
 -poi list for via autocomplete
 
 -troubleshoot debouncing
--troubleshoot slow mousing
 
 -transit mode in URL
 -selected in url

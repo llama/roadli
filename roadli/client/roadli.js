@@ -18,7 +18,7 @@ calcRoute = function(viaplace,vianame) {
   if (!start || !end) return;
 
  
-  console.log('calcing route');
+  // console.log('calcing route');
 
 
   var waypts = [];
@@ -287,7 +287,7 @@ Meteor.startup( function() {
   }
 
   Session.set('selected-tmode','DRIVING');  
-  console.log('starting up!');
+  // console.log('starting up!');
 
   var s = getParameterByName('start');
   var e = getParameterByName('end');
