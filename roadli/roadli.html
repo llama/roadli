@@ -27,11 +27,11 @@
         <div class="instruct" style="margin-bottom:2%">Get the fastest route via a location type.</div>
       </div>
       <div class='instruct'>Go from</div>
-      <input type="text" id="from-place"></input><br>
+      <input type="text" id="from-place"><br>
       <div class='instruct'>to</div>
-      <input type="text" id="to-place"></input>
+      <input type="text" id="to-place">
       <div class='instruct' id="via-a">via a</div>
-      <input type="text" placeholder="e.g. McDonalds, Hardware Store, etc." id="via-place" onkeyup="if (['a','e','i','o','u'].indexOf(this.value[0])>-1) {$('#via-a').text('via an')} else if ($('#via-a').text() == 'via an') {$('#via-a').text('via a')}"></input>
+      <input type="text" placeholder="e.g. McDonalds, Hardware Store, etc." id="via-place" onkeyup="if (['a','e','i','o','u'].indexOf(this.value[0])>-1) {$('#via-a').text('via an')} else if ($('#via-a').text() == 'via an') {$('#via-a').text('via a')}">
       <!-- <button class="button">Go</button> -->
     </div>
     {{#constant}}
@@ -43,7 +43,7 @@
   {{else}}
   {{> faq}}
   {{/if}}
-</div>
+
 
 
 <!--
