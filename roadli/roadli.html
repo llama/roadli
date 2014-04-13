@@ -14,9 +14,9 @@
 
 <template name="main">
   <div class='wrapper'>
-    <div class="travel-mode" style="position:absolute;top:10px;left:10px;">
+    <div class="travel-mode" style="position:absolute;top:10px;left:10px;z-index:5000">
       {{#each travel_modes}}
-      <img src={{this.image}} class="tmode {{tmode_selected}}" style="margin-top:{{this.topmargin}}px" alt={{this.alt}}><br>
+        <img src={{this.image}} class="tmode {{tmode_selected}}" style="margin-top:{{this.topmargin}}px" alt={{this.alt}}><br>
       {{/each}}
     </div>
 
