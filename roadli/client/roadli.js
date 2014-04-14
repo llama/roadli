@@ -377,20 +377,20 @@ goog = function() {
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
   // ads
-  var adUnitDiv = document.createElement('div');
-  var adUnitOptions = {
-    format: google.maps.adsense.AdFormat.WIDE_SKYSCRAPER,
-    position: google.maps.ControlPosition.RIGHT_TOP,
-    backgroundColor: '#f5f5f5',
-    borderColor: '#cccccc',
-    titleColor: '#1155cc',
-    textColor: '#333333',
-    urlColor: '#009900',
-    map: map,
-    visible: true,
-    publisherId: ADSENSE_PUBLISHER_ID
-  }
-  adUnit = new google.maps.adsense.AdUnit(adUnitDiv, adUnitOptions);
+  // var adUnitDiv = document.createElement('div');
+  // var adUnitOptions = {
+  //   format: google.maps.adsense.AdFormat.WIDE_SKYSCRAPER,
+  //   position: google.maps.ControlPosition.RIGHT_TOP,
+  //   backgroundColor: '#f5f5f5',
+  //   borderColor: '#cccccc',
+  //   titleColor: '#1155cc',
+  //   textColor: '#333333',
+  //   urlColor: '#009900',
+  //   map: map,
+  //   visible: true,
+  //   publisherId: ADSENSE_PUBLISHER_ID
+  // }
+  // adUnit = new google.maps.adsense.AdUnit(adUnitDiv, adUnitOptions);
   // / ads
 
   Deps.autorun(function() {
