@@ -8,6 +8,7 @@ html, body {
   color:#262626;
 }
 
+
 /* PHONES */
 @media screen and (max-device-width: 480px) {
   body .form {
@@ -38,6 +39,21 @@ html, body {
 
   body .leg {
     display:none;
+  }
+
+  body .travel-mode {
+    clear: both;
+    position: relative;
+    padding: 10px 0;
+    right: auto;
+    text-align: center;
+    top: auto;
+    width: 100%;
+  }
+
+  body .tmode, body .tmode.selected {
+    width: 25px;
+    margin: 0 10px;
   }
 }
 
@@ -127,6 +143,10 @@ h1 {
 
 .travel-mode {
   width:2.5%;
+  position:absolute;
+  top:10px;
+  right:51%;
+  z-index:5000
 }
 
 .tmode {
