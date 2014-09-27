@@ -49,6 +49,7 @@ html, body {
     text-align: center;
     top: auto;
     width: 100%;
+    z-index: auto;
   }
 
   body .tmode, body .tmode.selected {
