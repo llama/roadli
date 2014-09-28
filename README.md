@@ -16,4 +16,4 @@ To deploy:
 
 NOTE: The google maps API key is setup to only allow requests with referer road.li. To get things to work locally, add this line to your /etc/hosts file:  
 `127.0.0.1 road.li`  
-Or put in your own google api token. 
+And then use road.li:3000. Or put in your own google api token. 

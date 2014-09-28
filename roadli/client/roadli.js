@@ -11,6 +11,11 @@ var $is_mobile;
 
 calcRoute = function(viaplace,vianame) {
 
+  if (typeof(google) == 'undefined') {
+    setTimeout(calcRoute,100);
+    return;
+  }
+
   // if (!document.getElementById('from-place')) return;
   var start = document.getElementById('from-place').value;
   var end = document.getElementById('to-place').value;
@@ -57,7 +62,7 @@ calcRoute = function(viaplace,vianame) {
     // console.log(response,status);
     if (status == google.maps.DirectionsStatus.OK) {
       var route = response.routes[0];
-      if (route.legs[0].distance.value > 300000) {
+      if (route.legs[0].distance.value > 400000) {
         alert('Roadli currently only supports trips shorter than 300 km');
         return;
       }
@@ -324,8 +329,7 @@ Meteor.startup( function() {
 
   if (!Session.get('udat')) {
     function geoCallback(position) {
-      if (position) {
-        console.log(position);
+      if (position && !Session.get('udat') && !Session.get('oldfindstart')) { // the second clause is attempt to not move map on them if theyve already searched) {
         var udat = {};
         udat.latitude = position.coords.latitude;
         udat.longitude = position.coords.longitude;
@@ -565,7 +569,8 @@ findPlaces = function() {
           var clickForId = function(pid) {
             return function() {
               Session.set('selected-place',pid);
-              setTimeout(function(){$('.route-table').scrollTo('.selected')},250);
+              $('.route-table').scrollTo('.selected');
+              // setTimeout(function(){$('.route-table').scrollTo('.selected')},500);
             };
           };
 
