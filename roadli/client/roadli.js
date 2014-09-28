@@ -12,7 +12,7 @@ var $is_mobile;
 calcRoute = function(viaplace,vianame) {
 
   if (typeof(google) == 'undefined') {
-    setTimeout(calcRoute,100);
+    setTimeout(function(){calcRoute(viaplace,vianame)},100);
     return;
   }
 
@@ -180,7 +180,7 @@ Deps.autorun(function() {
     // updateQueryStringParameter('selected','');
   }
 
-  if (!spid || !google) {
+  if (!spid) {
     // direct route selected
     setTimeout(calcRoute,100);
     return;
@@ -569,8 +569,8 @@ findPlaces = function() {
           var clickForId = function(pid) {
             return function() {
               Session.set('selected-place',pid);
-              $('.route-table').scrollTo('.selected');
-              // setTimeout(function(){$('.route-table').scrollTo('.selected')},500);
+              // $('.route-table').scrollTo('.selected');
+              setTimeout(function(){$('.route-table').scrollTo('.selected')},500);
             };
           };
 
