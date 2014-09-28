@@ -171,8 +171,11 @@ Deps.autorun(function() {
   }
 });
 
-Deps.autorun(function() {
-  var spid = Session.get('selected-place');
+function updateForSelectedPlace(spid) {
+  if (typeof(google) == 'undefined') {
+    setTimeout(function(){updateForSelectedPlace(spid)},100);
+    return
+  }
 
   if (spid) {
     // updateQueryStringParameter('selected',spid);
@@ -193,6 +196,11 @@ Deps.autorun(function() {
   selectedplaceinfo.open(map, placemarkers[sp.id]);
 
   calcRoute(sp.vicinity,sp.name);
+}
+
+Deps.autorun(function() {
+  var spid = Session.get('selected-place');
+  updateForSelectedPlace(spid);
 })
 
 Template.route_table.maybe_selected = function() {
@@ -570,7 +578,7 @@ findPlaces = function() {
             return function() {
               Session.set('selected-place',pid);
               // $('.route-table').scrollTo('.selected');
-              setTimeout(function(){$('.route-table').scrollTo('.selected')},500);
+              setTimeout(function(){$('.route-table').scrollTo('.selected',800,{offset:-100,easing:'swing'})},100);
             };
           };
 
