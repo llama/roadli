@@ -320,6 +320,18 @@ Meteor.startup( function() {
   //     });
   // }
 
+  if (!Session.get('udat')) {
+    function geoCallback(position) {
+      if (position) {
+        console.log(position);
+        var udat = {};
+        udat.latitude = position.coords.latitude;
+        udat.longitude = position.coords.longitude;
+        Session.set('udat',udat);
+      }
+    }
+    navigator.geolocation.getCurrentPosition(geoCallback);
+  }
 
 
   $('#from-place').blur(function() {
