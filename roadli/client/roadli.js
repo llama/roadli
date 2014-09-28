@@ -311,14 +311,14 @@ Meteor.startup( function() {
   
   $('.form a').fitText();
 
-  if (!Session.get('udat')) {
-    // $.getJSON('http://ip-api.com/json/?callback=?', // NEED NEW SOLUTION for ssl httbin?
-      $.getJSON('https://freegeoip.net/json/?callback=?',
-      function(data){
-        console.log(data)
-        Session.set('udat',data);
-      });
-  }
+  // if (!Session.get('udat')) {
+  //   // $.getJSON('http://ip-api.com/json/?callback=?', // NEED NEW SOLUTION for ssl httbin?
+  //     $.getJSON('https://freegeoip.net/json/?callback=?',
+  //     function(data){
+  //       console.log(data)
+  //       Session.set('udat',data);
+  //     });
+  // }
 
 
 
