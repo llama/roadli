@@ -1,4 +1,4 @@
-var G_API_KEY = 'AIzaSyBFp14Fv8ZVBJe7nrdRXcnGnTA-4WpcjX8';
+var G_API_KEY = 'AIzaSyAOcPg3aWxyDL1WV897LrDZfatvlAHfmkE';
 var ADSENSE_PUBLISHER_ID = 'pub-1528594420112252';
 var GMAPS_VISUAL_REFRESH = true;
 // var DISTANCE_FROM_RT = 3; // km
@@ -311,6 +311,8 @@ Meteor.startup( function() {
   
   $('.form a').fitText();
 
+  // TODO: 1) make it so this doesnt block the google maps api calls
+  //    2) switch to maxmind, which isnt free but is ultra cheap
   // if (!Session.get('udat')) {
   //   // $.getJSON('http://ip-api.com/json/?callback=?', // NEED NEW SOLUTION for ssl httbin?
   //     $.getJSON('https://freegeoip.net/json/?callback=?',
