@@ -113,6 +113,9 @@ getParameterByName = function(name) {
 
 updateQueryStringParameter = function(key, value) {
   if (!value) value='';
+
+  value = encodeURIComponent(value);
+
   var uri = document.location.href;
   var re = new RegExp("([?|&])" + key + "=.*?(&|$)", "i");
   separator = uri.indexOf('?') !== -1 ? "&" : "?";

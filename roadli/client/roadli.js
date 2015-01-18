@@ -305,10 +305,11 @@ Meteor.startup( function() {
   var s = getParameterByName('start');
   var e = getParameterByName('end');
   var v = getParameterByName('via');
+
   // var c = getParameterByName('selected');
   if (s) $('#from-place').val(s);
-  if (e) {$('#to-place').val(e);setTimeout(calcRoute,1000);}
-  if (v) {$('#via-place').val(v);setTimeout(findPlaces,2000);}
+  if (e) {$('#to-place').val(e);setTimeout(calcRoute,2000);}
+  if (v) {$('#via-place').val(v);setTimeout(findPlaces,1000);}
   // if (c) {Session.set('selected-place',c)};
 
   function loadScript() {
