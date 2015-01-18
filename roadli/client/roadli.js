@@ -314,7 +314,7 @@ Meteor.startup( function() {
   function loadScript() {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src = 'http://maps.googleapis.com/maps/api/js?key='+G_API_KEY+'&sensor=false&callback=goog&libraries=places; 
+    script.src = 'http://maps.googleapis.com/maps/api/js?key='+G_API_KEY+'&sensor=false&callback=goog&libraries=places'; 
     document.body.appendChild(script);
   }
   window.onload = loadScript;
