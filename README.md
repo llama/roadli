@@ -8,11 +8,9 @@ To run:
 
 No need for meteorite, just vanilla meteor. Go to 'localhost:5000' in browser to see it.
 
-
-To deploy:  
-`meteor deploy myfunsite`  
-...deploys to myfunsite.meteor.com  
-`meteor deploy road.li` if you have permission.  
+deploy:
+from top level
+`git subtree push --prefix roadli heroku master`
 
 NOTE: The google maps API key is setup to only allow requests with referer road.li. To get things to work locally, add this line to your /etc/hosts file:  
 `127.0.0.1 road.li`  
