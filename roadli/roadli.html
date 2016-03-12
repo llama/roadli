@@ -28,7 +28,7 @@
         <div class="instruct" style="margin-bottom:2%">Get the fastest route via a location type.</div>
       </div>
       <div class='instruct'>Go from</div>
-      <span class='formfield'><input type="text" id="from-place">{{#if udat}}<img class='crosshair' src="/crosshair.png">{{/if}}</span>
+      <span class='formfield'><input type="text" id="from-place"><img class='crosshair {{#if udat}}enabled{{/if}}' src="/crosshair.png"></span>
       <div class='instruct'>to</div>
       <span class='formfield'><input type="text" id="to-place"></span>
       <div class='instruct' id="via-a">via a</div>
@@ -96,7 +96,7 @@
     <h2>Examples?</h2>
     <!-- Switch to fade between options -->
     <a href='/?start=Palo%20Alto&end=San%20Francisco&via=In-n-Out%20Burger'>Palo Alto to San Francisco, via an In-n-Out Burger</a><br>
-    <a href='/?start=Boston&end=Providence&via=McDonalds'>Boston to Providence, via a McDonalds</a><br>
+    <a href='/?start=Boston&end=Providence&via=Car%20wash'>Boston to Providence, via a car wash</a><br>
 
     <h2>Doesn't Google Maps do this?</h2>
     The redesigned Google Maps now has this basic functionality, but does not present the alternative options as clearly.

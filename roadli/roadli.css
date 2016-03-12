@@ -15,6 +15,11 @@ html, body {
   top:5px;
   margin-left:-30px;
   cursor:pointer;
+  opacity:0.2;
+}
+
+.crosshair.enabled {
+  opacity: 1;
 }
 
 /* PHONES */
