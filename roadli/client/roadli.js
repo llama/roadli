@@ -22,7 +22,7 @@ calcRoute = function(viaplace,vianame) {
 
   if (!start || !end) return;
 
- 
+
   // console.log('calcing route');
 
 
@@ -45,12 +45,12 @@ calcRoute = function(viaplace,vianame) {
   var dirflg;
   for (var i=0;i<travelmodes.length;i++) {
     if (travelmodes[i].constant == Session.get('selected-tmode')) {
-      dirflg = travelmodes[i].dirflg; 
+      dirflg = travelmodes[i].dirflg;
     }
   }
 
   var link = 'https://maps.google.com/maps?saddr=' + encodeURIComponent(start) + '&daddr=' + encodeURIComponent(dest) + '&dirflg=' + dirflg;
-  
+
   var request = {
     origin: start,
     destination: end,
@@ -120,7 +120,7 @@ getTimeForVia = function(place,timeTable) {
       var route = response.routes[0];
       // For each leg, display summary information.
       for (var i = 0; i < route.legs.length; i++) {
-        totalTime = totalTime + route.legs[i].duration.value;        
+        totalTime = totalTime + route.legs[i].duration.value;
       }
       timeTable[place] = totalTime;
     } else {
@@ -136,6 +136,13 @@ Template.main.events({
     Session.set('placeOptions',{});
     setTimeout(findPlaces,2000);
     window._gaq.push(['_trackEvent','ChangeMode',this.constant,'']);
+  },
+  'click .crosshair' : function() {
+    lat = Session.get('udat').latitude;
+    long = Session.get('udat').longitude;
+    Session.set('from-place', lat+ ', '+long);
+    document.getElementById('from-place').value = Session.get('from-place');
+    $('#to-place').focus();
   }
 })
 
@@ -225,6 +232,10 @@ Template.main.place_selected = function() {
   return Session.get('selected-place');
 }
 
+Template.main.udat = function() {
+  return Session.get('udat');
+}
+
 travelmodes = [
   {image: 'tmodecar.png',constant:'DRIVING',alt:'Car',topmargin:0, dirflg:'d'},
   {image: 'tmodebike.png',constant:'BICYCLING',alt:'Bike',topmargin:0, dirflg:'b'},
@@ -254,7 +265,7 @@ Template.route_table.placeOptions = function() {
     if (l.durationTo && l.durationFrom) {
       l.totalTime = l.durationTo.value + l.durationFrom.value;
       l.timeAdded = l.totalTime - mr.legs[0].duration.value;
-      result.push(pdict[key]); 
+      result.push(pdict[key]);
     };
   }
   result = result.sort(function(a,b) {return a.totalTime - b.totalTime});
@@ -296,10 +307,10 @@ Template.main.rendered = function() {
 Meteor.startup( function() {
   var $is_mobile = false;
   if( $('#map-canvas').css('display') == 'none' ) {
-      $is_mobile = true;      
+      $is_mobile = true;
   }
 
-  Session.set('selected-tmode','DRIVING');  
+  Session.set('selected-tmode','DRIVING');
   // console.log('starting up!');
 
   var s = getParameterByName('start');
@@ -315,14 +326,14 @@ Meteor.startup( function() {
   function loadScript() {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src = 'http://maps.googleapis.com/maps/api/js?key='+G_API_KEY+'&sensor=false&callback=goog&libraries=places'; 
+    script.src = 'http://maps.googleapis.com/maps/api/js?key='+G_API_KEY+'&sensor=false&callback=goog&libraries=places';
     document.body.appendChild(script);
   }
   window.onload = loadScript;
   Session.set('mapslink',null);
   Session.set('viaplace',null);
   if (!s) $('#from-place').focus();
-  
+
   $('.form a').fitText();
 
   // TODO: 1) make it so this doesnt block the google maps api calls
@@ -490,8 +501,8 @@ addAutocompleteToInput(document.getElementById('from-place'));
 addAutocompleteToInput(document.getElementById('to-place'));
 
 
-  // setup VIA autocomplete (currently disabled) 
-  // var input = (document.getElementById('via-place')); 
+  // setup VIA autocomplete (currently disabled)
+  // var input = (document.getElementById('via-place'));
   // autoSelectOnTab(input);
   // var searchBox = new google.maps.places.SearchBox(input);
   // searchBox.setTypes(['establishment']);
@@ -537,7 +548,7 @@ findPlaces = function() {
 
   Session.set('placeOptions',{});
 
-  if (!boxes) return;  
+  if (!boxes) return;
 
   for (var i = 0; i < boxes.length; i++) {
     var request = {

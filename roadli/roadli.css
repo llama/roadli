@@ -9,6 +9,14 @@ html, body {
 }
 
 
+.crosshair {
+  height:25px;
+  position:relative;
+  top:5px;
+  margin-left:-30px;
+  cursor:pointer;
+}
+
 /* PHONES */
 @media screen and (max-device-width: 480px) {
   body .form {
@@ -102,7 +110,7 @@ h1 {
     height:100%;
     overflow:scroll;
 }
-.route-table { 
+.route-table {
   z-index:1000;
   max-height:50%;
   overflow:scroll;
