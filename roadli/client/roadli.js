@@ -62,9 +62,11 @@ calcRoute = function(viaplace,vianame) {
     // console.log(response,status);
     if (status == google.maps.DirectionsStatus.OK) {
       var route = response.routes[0];
-      if (route.legs[0].distance.value > 400000) {
-        alert('Roadli currently only supports trips shorter than 300 km');
-        return;
+      if (route.legs[0].distance.value > 400000 && !window.showedDistanceWarning) {
+        window.showedDistanceWarning = true;
+        if (!confirm('Results are slow and unreliable for trips longer than 400 km. Proceed anyway?')) {
+          return
+        }
       }
 
       Session.set('mapslink',link);
