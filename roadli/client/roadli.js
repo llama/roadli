@@ -328,7 +328,7 @@ Meteor.startup( function() {
   function loadScript() {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src = 'http://maps.googleapis.com/maps/api/js?key='+G_API_KEY+'&sensor=false&callback=goog&libraries=places';
+    script.src = 'https://maps.googleapis.com/maps/api/js?key='+G_API_KEY+'&sensor=false&callback=goog&libraries=places';
     document.body.appendChild(script);
   }
   window.onload = loadScript;
@@ -573,7 +573,7 @@ findPlaces = function() {
           // draw marker
           var image = {
             // url: result.icon,
-            url: 'http://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png',
+            url: 'https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png',
             size: new google.maps.Size(71, 71),
             origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(17, 34),
