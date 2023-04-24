@@ -150,11 +150,11 @@ Template.main.events({
 
 Template.route_table.events({
   'click .route-table tr' : function() {
-    Session.set('selected-place',this.id);
+    Session.set('selected-place',this.place_id);
     window._gaq.push(['_trackEvent','ClickRoute','someRoute','']);
   },
   'mouseenter .route-table tr' : function() {
-    Session.set('hover-place',this.id);
+    Session.set('hover-place',this.place_id);
 
   },
   'mouseleave .route-table' : function() {
@@ -202,7 +202,7 @@ function updateForSelectedPlace(spid) {
   if (selectedplaceinfo) selectedplaceinfo.close();
   selectedplaceinfo = new google.maps.InfoWindow();
   selectedplaceinfo.setContent('<div><strong>' + sp.name + '</strong><br>' + sp.vicinity);
-  selectedplaceinfo.open(map, placemarkers[sp.id]);
+  selectedplaceinfo.open(map, placemarkers[sp.place_id]);
 
   calcRoute(sp.vicinity,sp.name);
 }
@@ -213,9 +213,9 @@ Deps.autorun(function() {
 })
 
 Template.route_table.maybe_selected = function() {
-  if (Session.equals('selected-place',this.id)) {
+  if (Session.equals('selected-place',this.place_id)) {
     return 'selected';
-  } else if (Session.equals('hover-place',this.id)) {
+  } else if (Session.equals('hover-place',this.place_id)) {
     return 'hover';
   }
   return '';
@@ -524,7 +524,7 @@ addAutocompleteToInput(document.getElementById('to-place'));
 
 
 findPlaces = function() {
-
+  console.log('findplaces');
   var start = document.getElementById('from-place').value;
   var end = document.getElementById('to-place').value;
   var viaplace = document.getElementById('via-place').value;
@@ -562,14 +562,12 @@ findPlaces = function() {
     service = new google.maps.places.PlacesService(map);
     service.nearbySearch(request, function(results, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
-
       results = results.splice(0,25); // truncate at 25 results per box
 
       var places = Session.get('placeOptions');
       for (var i=0,result;result=results[i];i++) {
-        if (places[result.id] == null) {
-          places[result.id] = result;
-
+        if (places[result.place_id] == null) {
+          places[result.place_id] = result;
           // draw marker
           var image = {
             // url: result.icon,
@@ -602,12 +600,12 @@ findPlaces = function() {
             };
           };
 
-          google.maps.event.addListener(marker, 'click', clickForId(result.id));
-          google.maps.event.addListener(marker, 'mouseover', hoverForId(result.id));
+          google.maps.event.addListener(marker, 'click', clickForId(result.place_id));
+          google.maps.event.addListener(marker, 'mouseover', hoverForId(result.place_id));
           google.maps.event.addListener(marker, 'mouseout', function() {Session.set('hover-place',null)});
 
-          marker.pid = result.id;
-          placemarkers[result.id] = marker;
+          marker.pid = result.place_id;
+          placemarkers[result.place_id] = marker;
           // result.mmarker = marker;
         }
       }
@@ -617,7 +615,7 @@ findPlaces = function() {
       var placeLocs = [];
       for (var i=0,place; place=results[i];i++) {
         placeLocs.push(place.geometry.location);
-        ids.push(place.id);
+        ids.push(place.place_id);
       };
       var service = new google.maps.DistanceMatrixService();
       service.getDistanceMatrix(
